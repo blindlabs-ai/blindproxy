@@ -1,0 +1,20 @@
+Zero-Proxy (zero-proxy)
+Copyright 2026 Blind Labs
+
+This product includes software developed at Blind Labs.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use the contents of this repository except in compliance with the License.
+See the LICENSE file at the root of this repository or obtain a copy at
+http://www.apache.org/licenses/LICENSE-2.0.
+
+Specifications implemented:
+- IETF RFC 9110 / RFC 9112 (HTTP/1.1), RFC 8446 (TLS 1.3 & Section 7.5 Exporters), RFC 8555 (ACME v2)
+- IETF RFC 8032 (Ed25519), NIST FIPS 202 (SHA-3 / SHAKE), NIST FIPS 204 (ML-DSA-87)
+- IEEE 802.3 / IEEE 802.1Q / IEEE 802.1ad, IETF RFC 791 (IPv4), RFC 8200 (IPv6), RFC 768 (UDP)
+- SipHash-2-4 (Aumasson and Bernstein, 2012)
+- IETF RFC 9669 (BPF Instruction Set Architecture)
+
+Trademarks (Section 6): "Blind Labs", "Zero-Proxy", "zero-proxy", and
+associated logos and brand identifiers are trademarks or service marks of
+Blind Labs.

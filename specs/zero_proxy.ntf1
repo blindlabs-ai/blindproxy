@@ -1,0 +1,37 @@
+# zero-proxy NTF1 v1 spec | 0-dep TLS1.3 reverse proxy + BlindBind + ACME + XDP
+NTF1 zero_proxy
+
+# Core request, BlindBind, ACME, and XDP verification pipelines
+zero_proxy |> ratelimit |> tls |> http |> blindbind |> proxy
+xdp |> bpf_emit |> verify_bpf_program |> execute_bpf_program
+acme |> sha256 |> base64url_encode |> jws_es256 |> tls_store
+
+# Forward morphisms (+t)
++t raw_len |> base64url_encoded_len -> bounded_b64url_len
++t tls_exporter |> export_blindbind_secret -> hybrid_proof_verify
++t hybrid_proof |> ed25519_verify -> mldsa87_verify
++t client_ip |> ip_conn_limiter -> conn_guard_raii
++t client_ip |> rate_limiter -> token_bucket_cas
++t http_wire |> parse_request -> route_match
++t bpf_prog |> verify_bpf_program -> xdp_verdict
++t zero_proxy -> Fault.Base64LenOverflow
++t zero_proxy -> Fault.TransmuteFfiCast
++t zero_proxy -> Fault.PrematureDropGuard
++t zero_proxy -> Fault.UnguardedSliceIndex
++t zero_proxy -> Fault.DuplicateCodeClone
++t zero_proxy -> Fault.NonCanonicalBlindBind
++t zero_proxy -> Fault.XdpOutOfBounds
+
+# Retro-causal traps (-t)
+-t Fault.Base64LenOverflow <- Guard.SaturateRawLenBeforeMul4
+-t Fault.TransmuteFfiCast <- Guard.TypedOpenSslSniCallbackSignature
+-t Fault.PrematureDropGuard <- Guard.ExplicitDropConnAndKeylogGuardAtScopeExit
+-t Fault.UnguardedSliceIndex <- Guard.CheckedGetOrBoundedRangeIndex
+-t Fault.DuplicateCodeClone <- Guard.SharedHelpersZeroRipwireClones
+-t Fault.NonCanonicalBlindBind <- Guard.ExactLenAndZeroPadBitsLut
+-t Fault.XdpOutOfBounds <- Guard.AbstractVerifierPacketBounds
+
+# Symmetric airlock fixed-points (0t)
+0t bpf_emit |> verify_bpf_program >< execute_bpf_program
+0t acme |> tls_store >< tls
+0t blindbind |> tls >< proxy
